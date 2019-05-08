@@ -1,0 +1,25 @@
+version: "3.1"
+
+services: 
+  web:
+    image: nginx:latest
+    networks:
+      - proxy
+
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./www:/www
+
+    labels:
+      - "traefik.docker.network=proxy"
+      - "traefik.enable=true"
+      - "traefik.basic.frontend.rule=Host:some.domain.com"
+      #generate using htpasswd
+      - "traefik.basic.frontend.auth.basic=someuser:$$2y$$05$$8q8nPYz5jDlbPOD4zknt1umb1eCtaNN1rR2bDcUfqZ3ZsWJvVhZD6"
+      - "traefik.basic.port=80"
+      - "traefik.basic.protocol=http"
+    container_name: some-container-name
+
+networks:
+  proxy:
+    external: true
